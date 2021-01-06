@@ -1,8 +1,8 @@
 package com.cst.todotasks.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.ImageButton
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +22,7 @@ import kotlinx.coroutines.withContext
  */
 class TaskListFragment : Fragment() {
     lateinit var taskList: MutableList<ToDoModel>
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +80,12 @@ class TaskListFragment : Fragment() {
                     layoutManager = LinearLayoutManager(context)
                     adapter = taskAdapter
                 }
+                recyclerView = view.findViewById<RecyclerView>(R.id.recyclerview)
+                view.findViewById<ImageButton>(R.id.addButton).setOnClickListener {
+                    (context as MainActivity).supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, EditTask()).addToBackStack(null).commit()
+                }
             }
         }
 
@@ -96,13 +103,26 @@ class TaskListFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.active -> {
-                        // TODO თქვენი კოდი
+                        if (taskList.isNotEmpty()) {
+                            (recyclerView.adapter as TaskAdapter).setNewLIst(taskList.filter { todo ->
+                                !todo.isDone!!
+                            })
+                            (recyclerView.adapter as TaskAdapter).notifyDataSetChanged()
+                        }
                     }
                     R.id.completed -> {
-                        // TODO თქვენი კოდი
+                        if (taskList.isNotEmpty()) {
+                            (recyclerView.adapter as TaskAdapter).setNewLIst(taskList.filter { todo ->
+                                todo.isDone!!
+                            })
+                            (recyclerView.adapter as TaskAdapter).notifyDataSetChanged()
+                        }
                     }
                     else -> {
-                        // TODO თქვენი კოდი
+                        if (taskList.isNotEmpty()) {
+                            (recyclerView.adapter as TaskAdapter).setNewLIst(taskList)
+                            (recyclerView.adapter as TaskAdapter).notifyDataSetChanged()
+                        }
                     }
                 }
                 true
@@ -116,5 +136,6 @@ class TaskListFragment : Fragment() {
         fun createInstance() = TaskListFragment()
 
     }
+
 
 }

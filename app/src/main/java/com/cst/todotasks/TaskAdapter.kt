@@ -1,13 +1,9 @@
 package com.cst.todotasks
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cst.todotasks.DBInstance.Companion.toDoDB
 import kotlinx.coroutines.Dispatchers
@@ -15,15 +11,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.graphics.Paint
 import android.os.Bundle
-import android.text.Layout
-import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
+import android.widget.*
 import com.cst.todotasks.ui.EditTask
 import com.cst.todotasks.ui.MainActivity
 import kotlinx.coroutines.withContext
 
 class TaskAdapter(
-    private val tasks: MutableList<ToDoModel>
+    private var tasks: MutableList<ToDoModel>
 ) :
     RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
@@ -42,7 +36,7 @@ class TaskAdapter(
         return tasks.size
     }
 
-    inner class TaskViewHolder(private val view: View, val context: Context) :
+    class TaskViewHolder(private val view: View, private val context: Context) :
         RecyclerView.ViewHolder(view) {
         private val checkBox: CheckBox = view.findViewById(R.id.checkbox)
         private val text: TextView = view.findViewById(R.id.text)
@@ -59,12 +53,24 @@ class TaskAdapter(
                     }
                 }
             }
+
+
             view.setOnClickListener {
 
                 (context as MainActivity).supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, EditTask().apply { arguments = Bundle().apply { putInt("uid",item.uid) } }).addToBackStack(null).commit()
+                    .replace(R.id.fragment_container, EditTask().apply {
+                        arguments = Bundle().apply {
+                            item.uid?.let { it1 ->
+                                putInt(
+                                    "uid",
+                                    it1
+                                )
+                            }
+                        }
+                    }).addToBackStack(null).commit()
             }
+
 
         }
 
@@ -80,5 +86,12 @@ class TaskAdapter(
 
     }
 
+    fun getUID(): Int {
+        return tasks[tasks.size - 1].uid
+    }
+
+    fun setNewLIst(list: List<ToDoModel>) {
+        this.tasks = list as MutableList<ToDoModel>
+    }
 
 }

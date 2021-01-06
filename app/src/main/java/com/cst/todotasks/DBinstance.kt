@@ -5,8 +5,8 @@ import androidx.room.Room
 
 class DBInstance {
     companion object {
-        lateinit var toDoDB : AppDatabase
-        fun dBBuilder(applicationContext:Context) {
+        lateinit var toDoDB: AppDatabase
+        fun dBBuilder(applicationContext: Context) {
             toDoDB = Room.databaseBuilder(
                 applicationContext,
                 AppDatabase::class.java, "todomodel"
